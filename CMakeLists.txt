@@ -15,13 +15,7 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 MESSAGE(${catkin_INCLUDE_DIRS})
 
-add_executable(main src/main.cpp src/LED.cpp src/Display.cpp src/LEDGrid.cpp)
-# add_executable(Display src/Display.cpp)
-# add_executable(LED src/LED.cpp)
-# add_executable(LEDGrid src/LEDGrid.cpp src/LED.cpp)
+add_executable(led_sim src/main.cpp src/LED.cpp src/Display.cpp src/LEDGrid.cpp)
 
-target_link_libraries(main ${catkin_LIBRARIES} GL GLEW SDL2)
-# target_link_libraries(Display ${catkin_LIBRARIES} GL GLEW SDL2)
-# target_link_libraries(LED ${catkin_LIBRARIES} GL GLEW SDL2)
-# target_link_libraries(LEDGrid ${catkin_LIBRARIES} GL GLEW SDL2)
+target_link_libraries(led_sim ${catkin_LIBRARIES} GL GLEW SDL2)
 
