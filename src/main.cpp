@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <ros/ros.h>
+#include <cyborg_led_sim/rgba.h>
 
 #include "LED.hpp"
 #include "LEDGrid.hpp"
@@ -9,7 +10,12 @@
 
 #define INF 999999
 
-using namespace std;
+// TODO: Redefine message 
+// int hue
+// int sat
+// int val
+// bool fade
+// int fadetime
 
 const int N_LEDS = 60;
 const int LED_WIDTH = 70;
@@ -44,11 +50,13 @@ void compute_grid_size(const int n_leds, float aspect_ratio, int& m, int& n) {
     n = cols;
 }
 
-int main(int argc, char** argv) {
-    
-    ros::init(argc, argv, "LED_simulator");
-    ros::NodeHandle nh;
+void callback_RGBA(const cyborg_led_sim::rgba msg) {
+    ROS_INFO("Received data");
+}
 
+int main(int argc, char** argv) {
+
+    // RGB grid setup
     int m, n;
     compute_grid_size(N_LEDS, 4.0f/3.0f, m, n);
 
@@ -60,6 +68,12 @@ int main(int argc, char** argv) {
     LEDGrid grid(m, n, LED_WIDTH, LED_HEIGHT, V_PAD, H_PAD, DISPLAY_HEIGHT); 
     grid.get_led(4, 2).set_color(glm::vec4(0.0f, 1.0f, 0.0f, 0.7f));
     glClearColor(.4f, .4f, .4f, 0.6f);
+
+    // ROS setup
+    ros::init(argc, argv, "LED_simulator");
+    ros::NodeHandle nh;
+
+    ros::Subscriber sub_rgba = nh.subscribe("RGBA_data", 100, callback_RGBA);
 
     ros::Rate loop_rate(30);
 
@@ -75,3 +89,4 @@ int main(int argc, char** argv) {
 
     return 0;
 }
+

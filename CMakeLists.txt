@@ -4,18 +4,21 @@ project(cyborg_led_sim)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  genmsg
 )
 
-#Generate added messages and services with any dependencies listed here
-# generate_messages(DEPENDENCIES)
+add_message_files(FILES rgba.msg)
+generate_messages(DEPENDENCIES)
 
-catkin_package()
+catkin_package(CATKIN_DEPENDS message_runtime)
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-MESSAGE(${catkin_INCLUDE_DIRS})
-
 add_executable(led_sim src/main.cpp src/LED.cpp src/Display.cpp src/LEDGrid.cpp)
+add_executable(publisher src/dummy_publisher.cpp)
 
 target_link_libraries(led_sim ${catkin_LIBRARIES} GL GLEW SDL2)
+target_link_libraries(publisher ${catkin_LIBRARIES})
+
+add_dependencies(led_sim cyborg_led_sim_generate_messages_cpp)
 
