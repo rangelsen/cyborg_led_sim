@@ -1,6 +1,7 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <ros/ros.h>
 
 #include "LED.hpp"
 #include "LEDGrid.hpp"
@@ -44,6 +45,9 @@ void compute_grid_size(const int n_leds, float aspect_ratio, int& m, int& n) {
 }
 
 int main(int argc, char** argv) {
+    
+    ros::init(argc, argv, "LED_simulator");
+    ros::NodeHandle nh;
 
     int m, n;
     compute_grid_size(N_LEDS, 4.0f/3.0f, m, n);
@@ -51,18 +55,22 @@ int main(int argc, char** argv) {
     const int DISPLAY_WIDTH  = (LED_WIDTH  + V_PAD) * n;
     const int DISPLAY_HEIGHT = (LED_HEIGHT + H_PAD) * m;
 
-    Display display(DISPLAY_WIDTH + V_PAD, DISPLAY_HEIGHT + H_PAD, "Cyborg RGB sim");
+    Display display(DISPLAY_WIDTH + V_PAD, DISPLAY_HEIGHT + H_PAD, "Cyborg LED sim");
 
     LEDGrid grid(m, n, LED_WIDTH, LED_HEIGHT, V_PAD, H_PAD, DISPLAY_HEIGHT); 
     grid.get_led(4, 2).set_color(glm::vec4(0.0f, 1.0f, 0.0f, 0.7f));
-
     glClearColor(.4f, .4f, .4f, 0.6f);
 
-    while(!display.is_closed()) {
-        glClear(GL_COLOR_BUFFER_BIT);
+    ros::Rate loop_rate(30);
 
+    while(ros::ok() && !display.is_closed()) {
+        ros::spinOnce();
+
+        glClear(GL_COLOR_BUFFER_BIT);
         grid.draw();
         display.update();
+
+        loop_rate.sleep();
     }
 
     return 0;
