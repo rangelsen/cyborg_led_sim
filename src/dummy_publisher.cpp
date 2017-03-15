@@ -14,12 +14,20 @@ void fill_random(float* channel, const int N) {
     }
 }
 
-// TODO: Find a smarter way to copy data between msg arrays
+// TODO: Find a smarter way to copy data between program and msg arrays
 cyborg_led_sim::rgba generate_message(float* r, float* g, float* b, float* a, const int N) {
     cyborg_led_sim::rgba msg;
-    for(int i = 0; i < N; i++) {
+    msg.n_vals = N_VALS;
 
+    for(int i = 0; i < N; i++) {
+        msg.r[i] = r[i]; 
+        msg.g[i] = g[i]; 
+        msg.b[i] = b[i]; 
+        msg.a[i] = a[i]; 
     }
+
+    msg.stamp = ros::Time::now();
+
     return msg;
 }
 
@@ -31,7 +39,7 @@ int main(int argc, char** argv) {
 
     ros::Publisher pub_rgba = nh.advertise<cyborg_led_sim::rgba>("RGBA_data", 100);
 
-    ros::Rate loop_rate(1);
+    ros::Rate loop_rate(2);
 
     cyborg_led_sim::rgba msg;
 

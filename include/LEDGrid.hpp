@@ -20,6 +20,7 @@ public:
             const int v_pad, const int h_pad, const int h);
     void draw();
     LED& get_led(int m, int n);
+    LED& get_led(int i);
 };
 
 #endif // LEDGRID_H

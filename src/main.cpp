@@ -23,6 +23,9 @@ const int LED_HEIGHT = 70;
 const int V_PAD = 5;
 const int H_PAD = 5;
 
+LEDGrid* grid;
+Display* display;
+
 void compute_grid_size(const int n_leds, float aspect_ratio, int& m, int& n) {
     float min_ratio_diff = INF;
     int rows = 1;
@@ -52,6 +55,10 @@ void compute_grid_size(const int n_leds, float aspect_ratio, int& m, int& n) {
 
 void callback_RGBA(const cyborg_led_sim::rgba msg) {
     ROS_INFO("Received data");
+
+    for(int i = 0; i < msg.n_vals; i++) {
+        grid->get_led(i).set_color(glm::vec4(msg.r[i], msg.g[i], msg.b[i], msg.a[i]));
+    }
 }
 
 int main(int argc, char** argv) {
@@ -63,10 +70,9 @@ int main(int argc, char** argv) {
     const int DISPLAY_WIDTH  = (LED_WIDTH  + V_PAD) * n;
     const int DISPLAY_HEIGHT = (LED_HEIGHT + H_PAD) * m;
 
-    Display display(DISPLAY_WIDTH + V_PAD, DISPLAY_HEIGHT + H_PAD, "Cyborg LED sim");
+    display = new Display(DISPLAY_WIDTH + V_PAD, DISPLAY_HEIGHT + H_PAD, "Cyborg LED sim");
+    grid = new LEDGrid(m, n, LED_WIDTH, LED_HEIGHT, V_PAD, H_PAD, DISPLAY_HEIGHT); 
 
-    LEDGrid grid(m, n, LED_WIDTH, LED_HEIGHT, V_PAD, H_PAD, DISPLAY_HEIGHT); 
-    grid.get_led(4, 2).set_color(glm::vec4(0.0f, 1.0f, 0.0f, 0.7f));
     glClearColor(.4f, .4f, .4f, 0.6f);
 
     // ROS setup
@@ -77,15 +83,18 @@ int main(int argc, char** argv) {
 
     ros::Rate loop_rate(30);
 
-    while(ros::ok() && !display.is_closed()) {
+    while(ros::ok() && !display->is_closed()) {
         ros::spinOnce();
 
         glClear(GL_COLOR_BUFFER_BIT);
-        grid.draw();
-        display.update();
+        grid->draw();
+        display->update();
 
         loop_rate.sleep();
     }
+
+    delete grid;
+    delete display;
 
     return 0;
 }

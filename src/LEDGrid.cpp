@@ -39,3 +39,7 @@ LED& LEDGrid::get_led(int m, int n) {
     return leds_.at(m * n_ + n);
 }
 
+LED& LEDGrid::get_led(int i) {
+    assert(i < m_ * n_);
+    return leds_.at(i);
+}
