@@ -4,12 +4,13 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <vector>
 
 #define N_VALS 60
 
 void fill_random(float* channel, const int N) {
     for(int i = 0; i < N; i++) {
-        int random = rand() % 10;
+        int random = rand() % 10 + 3.0f;
         channel[i] = (float) random / 10.0f;
     }
 }

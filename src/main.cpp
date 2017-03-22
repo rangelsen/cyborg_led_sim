@@ -54,8 +54,6 @@ void compute_grid_size(const int n_leds, float aspect_ratio, int& m, int& n) {
 }
 
 void callback_RGBA(const cyborg_led_sim::rgba msg) {
-    ROS_INFO("Received data");
-
     for(int i = 0; i < msg.n_vals; i++) {
         grid->get_led(i).set_color(glm::vec4(msg.r[i], msg.g[i], msg.b[i], msg.a[i]));
     }
