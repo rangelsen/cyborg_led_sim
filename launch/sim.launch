@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="cyborg_led_sim" type="led_sim" name="led_sim" />
+    <node pkg="cyborg_led_sim" type="publisher" name="publisher" />
+</launch>
