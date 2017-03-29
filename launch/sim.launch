@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
     <node pkg="cyborg_led_sim" type="led_sim"   name="led_sim"   output="screen" />
+    <node pkg="cyborg_led_sim" type="dummy_publisher" name="dummy_publisher" output="screen" />
     <!-- node pkg="cyborg_led_sim" type="publisher" name="publisher" output="screen" / -->
-    <node pkg="cyborg_led_sim" type="publisher" name="publisher" output="screen" />
 </launch>

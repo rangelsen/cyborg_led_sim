@@ -3,6 +3,8 @@
 #include <glm/gtx/string_cast.hpp>
 #include <ros/ros.h>
 #include <cyborg_led_sim/rgba.h>
+#include <led_driver/LedCommandArray.h>
+#include <opencv2/opencv.hpp>
 
 #include "LED.hpp"
 #include "LEDGrid.hpp"
@@ -10,6 +12,7 @@
 
 #define INF 999999
 
+// TODO: Convert from HSV to RGBA
 // TODO: Redefine message 
 // int hue
 // int sat
@@ -17,7 +20,7 @@
 // bool fade
 // int fadetime
 
-const int N_LEDS = 60;
+const int N_LEDS = 180;
 const int LED_WIDTH = 70;
 const int LED_HEIGHT = 70;
 const int V_PAD = 5;
@@ -59,6 +62,50 @@ void callback_RGBA(const cyborg_led_sim::rgba msg) {
     }
 }
 
+cv::Mat3b ledCmdsToMat(std::vector<led_driver::LedCommand> cmds) {
+    
+    cv::Mat3b output(1, cmds.size(), cv::Vec3b(0, 0, 0));
+
+    for(int i = 0; i < cmds.size(); i++) {
+        output.at<cv::Vec3b>(0, i)[0] = cmds[i].hue;
+        output.at<cv::Vec3b>(0, i)[1] = cmds[i].saturation;
+        output.at<cv::Vec3b>(0, i)[2] = cmds[i].value;
+    }
+
+    return output;
+}
+
+void driverCallback(const led_driver::LedCommandArray msg) {
+
+    ROS_INFO("[SIM] Received driver data");
+
+    std::vector<led_driver::LedCommand> led_cmds = msg.data;    
+    cv::Mat3b hsv = ledCmdsToMat(led_cmds);
+
+    ROS_INFO("[SIM] HSV matrix");
+    std::cout << hsv << std::endl;
+
+    cv::Mat rgb;
+    cv::cvtColor(hsv, rgb, CV_HSV2RGB);
+    // rgb /= 25.0f;
+
+    ROS_INFO("[SIM] RGB matrix");
+    std::cout << rgb << std::endl;
+    
+    for(int i = 0; i < rgb.cols; i++) {
+        float r = rgb.at<cv::Vec3b>(0, i)[0] / 25.0f;
+        float g = rgb.at<cv::Vec3b>(0, i)[1] / 25.0f;
+        float b = rgb.at<cv::Vec3b>(0, i)[2] / 25.0f;
+    /*
+        float r = rgb.at<cv::Vec3b>(0, i)[0];
+        float g = rgb.at<cv::Vec3b>(0, i)[1];
+        float b = rgb.at<cv::Vec3b>(0, i)[2];
+    */
+
+        grid->get_led(i).set_color(glm::vec4(r, g, b, 1.0f));
+    }
+}
+
 int main(int argc, char** argv) {
 
     // RGB grid setup
@@ -77,7 +124,8 @@ int main(int argc, char** argv) {
     ros::init(argc, argv, "LED_simulator");
     ros::NodeHandle nh;
 
-    ros::Subscriber sub_rgba = nh.subscribe("RGBA_data", 100, callback_RGBA);
+    // ros::Subscriber sub_rgba = nh.subscribe("RGBA_data", 100, callback_RGBA);
+    ros::Subscriber sub_driver = nh.subscribe("driver", 100, driverCallback);
 
     ros::Rate loop_rate(30);
 
