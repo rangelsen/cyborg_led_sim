@@ -12,14 +12,6 @@
 
 #define INF 999999
 
-// TODO: Convert from HSV to RGBA
-// TODO: Redefine message 
-// int hue
-// int sat
-// int val
-// bool fade
-// int fadetime
-
 const int N_LEDS = 180;
 const int LED_WIDTH = 70;
 const int LED_HEIGHT = 70;
@@ -75,32 +67,35 @@ cv::Mat3b ledCmdsToMat(std::vector<led_driver::LedCommand> cmds) {
     return output;
 }
 
+float map_value(float x, float in_min, float in_max, float out_min, float out_max) {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 void driverCallback(const led_driver::LedCommandArray msg) {
 
-    ROS_INFO("[SIM] Received driver data");
 
     std::vector<led_driver::LedCommand> led_cmds = msg.data;    
     cv::Mat3b hsv = ledCmdsToMat(led_cmds);
 
-    ROS_INFO("[SIM] HSV matrix");
-    std::cout << hsv << std::endl;
+
 
     cv::Mat rgb;
     cv::cvtColor(hsv, rgb, CV_HSV2RGB);
-    // rgb /= 25.0f;
+
+#if DEBUG
+    ROS_INFO("[SIM] Received driver data");
+
+    ROS_INFO("[SIM] HSV matrix");
+    std::cout << hsv << std::endl;
 
     ROS_INFO("[SIM] RGB matrix");
     std::cout << rgb << std::endl;
+#endif
     
     for(int i = 0; i < rgb.cols; i++) {
-        float r = rgb.at<cv::Vec3b>(0, i)[0] / 25.0f;
-        float g = rgb.at<cv::Vec3b>(0, i)[1] / 25.0f;
-        float b = rgb.at<cv::Vec3b>(0, i)[2] / 25.0f;
-    /*
-        float r = rgb.at<cv::Vec3b>(0, i)[0];
-        float g = rgb.at<cv::Vec3b>(0, i)[1];
-        float b = rgb.at<cv::Vec3b>(0, i)[2];
-    */
+        float r = (float) rgb.at<cv::Vec3b>(0, i)[0] / 255.0f;
+        float g = (float) rgb.at<cv::Vec3b>(0, i)[1] / 255.0f;
+        float b = (float) rgb.at<cv::Vec3b>(0, i)[2] / 255.0f;
 
         grid->get_led(i).set_color(glm::vec4(r, g, b, 1.0f));
     }
