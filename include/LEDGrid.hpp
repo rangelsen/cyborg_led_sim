@@ -21,6 +21,7 @@ public:
     void draw();
     LED& get_led(int m, int n);
     LED& get_led(int i);
+    void spin(int inc);
 };
 
 #endif // LEDGRID_H

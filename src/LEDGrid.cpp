@@ -5,16 +5,15 @@
 #include "LEDGrid.hpp"
 #include "LED.hpp"
 
-using namespace std;
-
 LEDGrid::LEDGrid(const int m, const int n, const int w_led, const int h_led,
-                 const int v_pad, const int h_pad, const int h) : m_(m),
-                                                                  n_(n),
-                                                                  w_led_(w_led),
-                                                                  h_led_(h_led),
-                                                                  v_pad_(v_pad),
-                                                                  h_pad_(h_pad),
-                                                                  h_(h) {
+                 const int v_pad, const int h_pad, const int h) :
+m_(m),
+n_(n),
+w_led_(w_led),
+h_led_(h_led),
+v_pad_(v_pad),
+h_pad_(h_pad),
+h_(h) {
 
     for(int i = 0; i < m_; i++) {
 
@@ -43,3 +42,4 @@ LED& LEDGrid::get_led(int i) {
     assert(i < m_ * n_);
     return leds_.at(i);
 }
+

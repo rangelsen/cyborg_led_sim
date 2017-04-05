@@ -5,6 +5,7 @@
 #include <cyborg_led_sim/rgba.h>
 #include <led_driver/LedCommandArray.h>
 #include <opencv2/opencv.hpp>
+#include <pthread.h>
 
 #include "LED.hpp"
 #include "LEDGrid.hpp"
@@ -13,7 +14,7 @@
 #define INF 999999
 #define DEBUG false
 
-const int N_LEDS = 180;
+const int N_LEDS = 210;
 const int LED_WIDTH = 70;
 const int LED_HEIGHT = 70;
 const int V_PAD = 5;
@@ -116,7 +117,7 @@ int main(int argc, char** argv) {
     ros::NodeHandle nh;
 
     // ros::Subscriber sub_rgba = nh.subscribe("RGBA_data", 100, callback_RGBA);
-    ros::Subscriber sub_driver = nh.subscribe("driver", 100, driverCallback);
+    ros::Subscriber sub_driver = nh.subscribe("LedCommandArray", 100, driverCallback);
 
     ros::Rate loop_rate(30);
 
