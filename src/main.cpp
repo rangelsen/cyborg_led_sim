@@ -11,6 +11,7 @@
 #include "Display.hpp"
 
 #define INF 999999
+#define DEBUG false
 
 const int N_LEDS = 180;
 const int LED_WIDTH = 70;
@@ -72,19 +73,14 @@ float map_value(float x, float in_min, float in_max, float out_min, float out_ma
 }
 
 void driverCallback(const led_driver::LedCommandArray msg) {
-
-
     std::vector<led_driver::LedCommand> led_cmds = msg.data;    
     cv::Mat3b hsv = ledCmdsToMat(led_cmds);
-
-
 
     cv::Mat rgb;
     cv::cvtColor(hsv, rgb, CV_HSV2RGB);
 
 #if DEBUG
     ROS_INFO("[SIM] Received driver data");
-
     ROS_INFO("[SIM] HSV matrix");
     std::cout << hsv << std::endl;
 
