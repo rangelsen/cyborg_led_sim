@@ -41,6 +41,9 @@ LED::~LED() {
     glDeleteBuffers(1, &vbo_);
 }
 
+/*
+ * Creates all the necessary data buffers and sends the data to the GPU for rendering
+ */
 void LED::setup() {
     glm::vec3 vertices[4] = {
         pos_,
@@ -49,7 +52,7 @@ void LED::setup() {
         pos_ + glm::vec3(w_, 0.0f, 0.0f)
     };
 
-    glColor4f(color_[0], color_[1], color_[2], color_[3]);
+    glColor4f(color_.r, color_.g, color_.b, color_.a);
 
     glGenVertexArrays(1, &vao_);
     glBindVertexArray(vao_);
@@ -59,18 +62,17 @@ void LED::setup() {
     glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(vertices[0]), vertices, GL_STATIC_DRAW);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, NULL);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-    glEnableVertexAttribArray(0);
 
     glBindVertexArray(0);
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
+/*
+ * Update the LED color and execute the rendering on the GPU
+ */
 void LED::draw() {
     glBindVertexArray(vao_);
-    glColor4f(color_[0], color_[1], color_[2], color_[3]);
+    glColor4f(color_.r, color_.g, color_.b, color_.a);
     glDrawArrays(GL_QUADS, 0, 4);
 }
 

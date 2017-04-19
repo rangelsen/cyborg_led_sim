@@ -4,16 +4,20 @@
 #include <GL/gl.h>
 #include <glm/glm.hpp>
 
+/*
+ * Designed to mimic exactly one LED and includes all its
+ * relevant properties
+ */
+
 class LED {
 
 private:
     glm::vec3 pos_;
     glm::vec4 color_;
-    float w_;
-    float h_;
+    float w_, h_;
 
-    GLuint vao_;
-    GLuint vbo_;
+    GLuint vao_; // Vertex Array Object
+    GLuint vbo_; // Vertex Buffer Object
 
 public:
     LED(const LED& rhs);
