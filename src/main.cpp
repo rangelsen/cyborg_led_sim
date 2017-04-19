@@ -5,7 +5,6 @@
 #include <cyborg_led_sim/rgba.h>
 #include <led_driver/LedCommandArray.h>
 #include <opencv2/opencv.hpp>
-#include <pthread.h>
 
 #include "LED.hpp"
 #include "LEDGrid.hpp"

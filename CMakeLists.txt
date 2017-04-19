@@ -15,6 +15,8 @@ catkin_package(CATKIN_DEPENDS message_runtime)
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 add_executable(led_sim src/main.cpp src/LED.cpp src/Display.cpp src/LEDGrid.cpp)
+add_executable(publisher src/dummy_publisher.cpp)
 
-target_link_libraries(led_sim ${catkin_LIBRARIES} GL GLEW SDL2 opencv_core opencv_imgproc pthread)
+target_link_libraries(led_sim ${catkin_LIBRARIES} GL GLEW SDL2 opencv_core opencv_imgproc)
+target_link_libraries(publisher ${catkin_LIBRARIES})
 
