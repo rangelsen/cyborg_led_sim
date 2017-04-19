@@ -22,6 +22,10 @@ const int H_PAD = 5;
 LEDGrid* grid;
 Display* display;
 
+/*
+ * Compute the number of columns n and rows m needed to display
+ * n_leds number of LEDs while trying to retain an aspect_ratio
+ */
 void compute_grid_size(const int n_leds, float aspect_ratio, int& m, int& n) {
     float min_ratio_diff = INF;
     int rows = 1;
@@ -49,12 +53,19 @@ void compute_grid_size(const int n_leds, float aspect_ratio, int& m, int& n) {
     n = cols;
 }
 
+/*
+ * Set all the LEDs in the grid to the color received from the dummy publisher message.
+ * Used for testing purposes only
+ */
 void callback_RGBA(const cyborg_led_sim::rgba msg) {
     for(int i = 0; i < msg.n_vals; i++) {
         grid->get_led(i).set_color(glm::vec4(msg.r[i], msg.g[i], msg.b[i], msg.a[i]));
     }
 }
 
+/*
+ * Convert a vector of LedCommand messages to an OpenCV matrix of HSV values
+ */
 cv::Mat3b ledCmdsToMat(std::vector<led_driver::LedCommand> cmds) {
     
     cv::Mat3b output(1, cmds.size(), cv::Vec3b(0, 0, 0));
@@ -68,10 +79,9 @@ cv::Mat3b ledCmdsToMat(std::vector<led_driver::LedCommand> cmds) {
     return output;
 }
 
-float map_value(float x, float in_min, float in_max, float out_min, float out_max) {
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
+/*
+ * Set all the LEDs in the grid to the color received from the transform node
+ */
 void driverCallback(const led_driver::LedCommandArray msg) {
     std::vector<led_driver::LedCommand> led_cmds = msg.data;    
     cv::Mat3b hsv = ledCmdsToMat(led_cmds);
@@ -115,7 +125,7 @@ int main(int argc, char** argv) {
     ros::init(argc, argv, "LED_simulator");
     ros::NodeHandle nh;
 
-    // ros::Subscriber sub_rgba = nh.subscribe("RGBA_data", 100, callback_RGBA);
+    // ros::Subscriber sub_rgba = nh.subscribe("RGBA_data", 100, callback_RGBA); // Used for testing the simulator standalone
     ros::Subscriber sub_driver = nh.subscribe("LedCommandArray", 100, driverCallback);
 
     ros::Rate loop_rate(30);
