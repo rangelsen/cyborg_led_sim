@@ -6,6 +6,9 @@
 
 using namespace std;
 
+/*
+ * Initialize OpenGL, create context and create a window
+ */
 Display::Display(int width, int height, const string& title) {
 
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -45,6 +48,9 @@ Display::~Display() {
     SDL_Quit();
 }
 
+/*
+ * Swap buffer and check for quit event
+ */
 void Display::update() {
     SDL_GL_SwapWindow(this->window);
 

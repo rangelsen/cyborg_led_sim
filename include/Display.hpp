@@ -4,6 +4,9 @@
 #include <string>
 #include <SDL2/SDL.h>
 
+/*
+ * Class to setup OpenGL and create context
+ */
 class Display {
 
 private:

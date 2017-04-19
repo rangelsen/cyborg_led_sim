@@ -5,6 +5,9 @@
 
 #include "LED.hpp"
 
+/*
+ * Class to manage a grid of LEDs with.
+ */
 class LEDGrid {
 
 private:
