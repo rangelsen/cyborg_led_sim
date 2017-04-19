@@ -11,7 +11,7 @@ If not, check out [this](https://en.wikibooks.org/wiki/OpenGL_Programming/Instal
 
 #### GLEW (OpenGL Extention Wrangler)
 
-Used for OpenGL function loading. Should also be shipped with Ubuntu but if it
+Used for OpenGL function loading. Should also be shipped with Ubuntu but it
 can easily be obtained from
 
 ```
