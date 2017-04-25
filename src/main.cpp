@@ -18,6 +18,16 @@ const int LED_WIDTH = 70;
 const int LED_HEIGHT = 70;
 const int V_PAD = 5;
 const int H_PAD = 5;
+const glm::vec3 COLOR_BLACK        = glm::vec3(0.0f, 0.0f, 0.0f);
+const glm::vec3 COLOR_WHITE        = glm::vec3(1.0f, 1.0f, 1.0f);
+const glm::vec3 COLOR_RED          = glm::vec3(1.0f, 0.0f, 0.0f);
+const glm::vec3 COLOR_LIGHT_RED    = glm::vec3(1.0f, 0.4f, 0.4f);
+const glm::vec3 COLOR_YELLOW       = glm::vec3(1.0f, 1.0f, 0.0f);
+const glm::vec3 COLOR_LIGHT_YELLOW = glm::vec3(1.0f, 1.0f, 0.4f);
+const glm::vec3 COLOR_GREEN        = glm::vec3(0.0f, 1.0f, 0.0f);
+const glm::vec3 COLOR_LIGHT_GREEN  = glm::vec3(0.4f, 1.0f, 0.4f);
+const glm::vec3 COLOR_BLUE         = glm::vec3(0.0f, 0.0f, 1.0f);
+const glm::vec3 COLOR_LIGHT_BLUE   = glm::vec3(0.4f, 0.4f, 1.0f);
 
 LEDGrid* grid;
 Display* display;
@@ -53,6 +63,24 @@ void compute_grid_size(const int n_leds, float aspect_ratio, int& m, int& n) {
     n = cols;
 }
 
+glm::vec3 mode_to_color(unsigned int mode) {
+    glm::vec3 color;
+
+    switch(mode) {
+        case 0: color = COLOR_BLACK; break;
+        case 1: color = COLOR_WHITE; break;
+        case 2: color = COLOR_RED; break;
+        case 3: color = COLOR_LIGHT_RED; break;
+        case 4: color = COLOR_YELLOW; break;
+        case 5: color = COLOR_LIGHT_YELLOW; break;
+        case 6: color = COLOR_GREEN; break;
+        case 7: color = COLOR_LIGHT_GREEN; break;
+        case 8: color = COLOR_BLUE; break;
+        default: color = COLOR_LIGHT_BLUE; break;
+    }
+    return color;
+}
+    
 /*
  * Set all the LEDs in the grid to the color received from the dummy publisher message.
  * Used for testing purposes only
@@ -71,9 +99,12 @@ cv::Mat3b ledCmdsToMat(std::vector<led_driver::LedCommand> cmds) {
     cv::Mat3b output(1, cmds.size(), cv::Vec3b(0, 0, 0));
 
     for(int i = 0; i < cmds.size(); i++) {
+        output.at<cv::Vec3b>(0, i)[0] = cmds[i].mode;
+    /*
         output.at<cv::Vec3b>(0, i)[0] = cmds[i].hue;
         output.at<cv::Vec3b>(0, i)[1] = cmds[i].saturation;
         output.at<cv::Vec3b>(0, i)[2] = cmds[i].value;
+    */
     }
 
     return output;
@@ -84,10 +115,10 @@ cv::Mat3b ledCmdsToMat(std::vector<led_driver::LedCommand> cmds) {
  */
 void driverCallback(const led_driver::LedCommandArray msg) {
     std::vector<led_driver::LedCommand> led_cmds = msg.data;    
-    cv::Mat3b hsv = ledCmdsToMat(led_cmds);
+    // cv::Mat3b hsv = ledCmdsToMat(led_cmds);
 
-    cv::Mat rgb;
-    cv::cvtColor(hsv, rgb, CV_HSV2RGB);
+    // cv::Mat rgb;
+    // cv::cvtColor(hsv, rgb, CV_HSV2RGB);
 
 #if DEBUG
     ROS_INFO("[SIM] Received driver data");
@@ -98,12 +129,19 @@ void driverCallback(const led_driver::LedCommandArray msg) {
     std::cout << rgb << std::endl;
 #endif
     
+    /*
     for(int i = 0; i < rgb.cols; i++) {
         float r = (float) rgb.at<cv::Vec3b>(0, i)[0] / 255.0f;
         float g = (float) rgb.at<cv::Vec3b>(0, i)[1] / 255.0f;
         float b = (float) rgb.at<cv::Vec3b>(0, i)[2] / 255.0f;
 
-        grid->get_led(i).set_color(glm::vec4(r, g, b, 1.0f));
+        // grid->get_led(i).set_color(glm::vec4(r, g, b, 1.0f));
+    }
+    */
+
+    for(int i = 0; i < led_cmds.size(); i++) {
+        glm::vec3 color = mode_to_color(led_cmds[i].mode);
+        grid->get_led(i).set_color(glm::vec4(color, 1.0f));
     }
 }
 
